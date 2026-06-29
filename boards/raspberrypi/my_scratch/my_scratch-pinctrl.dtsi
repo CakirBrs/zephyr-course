@@ -1,0 +1,2 @@
+#include <zephyr/dt-bindings/pinctrl/rpi-pico-rp2350a-pinctrl.h>
+#include "../common/rpi_pico-pinctrl-common.dtsi"

@@ -1,0 +1,6 @@
+board:
+  name: my_scratch
+  full_name: My Scratch RP2350 Board
+  vendor: raspberrypi
+  socs:
+  - name: rp2350a
