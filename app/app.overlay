@@ -1,5 +1,12 @@
+#include <zephyr/dt-bindings/gpio/gpio.h>
+
 / {
 	aliases {
 		app-led = &led0;
+	};
+
+	led_sensor: led_sensor {
+		compatible = "myco,led-sensor";
+		gpios = <&gpio0 25 GPIO_ACTIVE_HIGH>;   /* onboard LED = GP25 */
 	};
 };
