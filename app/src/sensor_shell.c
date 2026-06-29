@@ -6,6 +6,8 @@
 #include "led_sensor.h"
 
 #define SENSOR_DEV DEVICE_DT_GET_ANY(myco_led_sensor)
+#define BLINK_COUNT_MIN 0
+#define BLINK_COUNT_MAX 100
 
 static int cmd_sensor_fetch(const struct shell *sh, size_t argc, char **argv)
 {
@@ -59,11 +61,41 @@ static int cmd_sensor_info(const struct shell *sh, size_t argc, char **argv)
 	return 0;
 }
 
+
+
+static int cmd_sensor_set(const struct shell *sh, size_t argc, char **argv)
+{
+	const struct device *dev = SENSOR_DEV;
+
+	if (dev == NULL || !device_is_ready(dev)) {
+		shell_error(sh, "sensor not ready");
+		return -ENODEV;
+	}
+
+	char *end;
+	long value = strtol(argv[1], &end, 10);
+
+	if (*end != '\0') {
+		shell_error(sh, "invalid number: %s", argv[1]);
+		return -EINVAL;
+	}
+	if (value < BLINK_COUNT_MIN || value > BLINK_COUNT_MAX) {
+		shell_error(sh, "out of range (%d..%d): %ld",
+			    BLINK_COUNT_MIN, BLINK_COUNT_MAX, value);
+		return -EINVAL;
+	}
+
+	led_sensor_set_blink_count(dev, (uint32_t)value);
+	shell_print(sh, "blink_count set to %ld", value);
+	return 0;
+}
+
 /* Alt-komutlar */
 SHELL_STATIC_SUBCMD_SET_CREATE(sensor_cmds,
 	SHELL_CMD(fetch, NULL, "Call sensor_sample_fetch (LED on)", cmd_sensor_fetch),
 	SHELL_CMD(read,  NULL, "Call sensor_channel_get (LED off)", cmd_sensor_read),
 	SHELL_CMD(info,  NULL, "Print device name and ready state", cmd_sensor_info),
+    SHELL_CMD_ARG(set, NULL, "Set blink_count: sensor set <value>", cmd_sensor_set, 2, 0),
 	SHELL_SUBCMD_SET_END
 );
 
