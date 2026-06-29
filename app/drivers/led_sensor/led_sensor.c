@@ -4,13 +4,15 @@
 #include <zephyr/device.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/sensor.h>
+#include "led_sensor.h"
 
 struct led_sensor_config {
 	struct gpio_dt_spec led;        
 };
 
 struct led_sensor_data {
-	bool led_on;                   
+	bool led_on;      
+    uint32_t blink_count;             
 };
 
 static int led_sensor_sample_fetch(const struct device *dev, enum sensor_channel chan)
@@ -66,3 +68,16 @@ static int led_sensor_init(const struct device *dev)
 			      &led_sensor_api);
 
 DT_INST_FOREACH_STATUS_OKAY(LED_SENSOR_INIT)
+
+int led_sensor_set_blink_count(const struct device *dev, uint32_t count)
+{
+	struct led_sensor_data *data = dev->data;
+	data->blink_count = count;
+	return 0;
+}
+
+uint32_t led_sensor_get_blink_count(const struct device *dev)
+{
+	struct led_sensor_data *data = dev->data;
+	return data->blink_count;
+}

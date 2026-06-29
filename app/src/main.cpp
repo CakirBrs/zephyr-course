@@ -2,6 +2,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/sensor.h>
+#include "led_sensor.h"
 //#define SLEEP_TIME_MS 1000
 
 /* The devicetree node identifier for the "led0" alias. */
@@ -31,7 +32,7 @@ int main(void)
 	}
 
 	struct sensor_value val;
-
+    led_sensor_set_blink_count(sensor, 10);
     while (1) {
         //if (gpio_pin_toggle_dt(&heartbeat) < 0) return 0;
 
